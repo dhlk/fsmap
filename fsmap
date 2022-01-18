@@ -35,5 +35,6 @@ if [[ "$lookup" -eq 1 ]]; then
 fi
 
 entry="$(mktemp -p "$dir/$sum" -d XXXXXXXX)"
+chmod --reference="$dir" "$entry"
 echo -n "$key" > "$entry/key"
 echo "$entry"
