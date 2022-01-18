@@ -10,8 +10,8 @@ fi
 dir="$1"
 key="$2"
 
-if [[ -z "$dir" || ! -d "$dir" || -z "$key" ]]; then
-	echo "usage: $0 [-l] dir key" 1>&2
+if [[ -z "$dir" || ! -d "$dir" ]]; then
+	echo "usage: $0 [-l] dir [key]" 1>&2
 	exit 1
 fi
 
