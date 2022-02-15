@@ -7,9 +7,34 @@ import (
 	"errors"
 	"hash"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"path/filepath"
+	"strconv"
 )
+
+func mkdirTemp(dir string) (string, error) {
+	try := 0
+	for {
+		name := filepath.Join(dir, strconv.FormatUint(rand.Uint64(), 10))
+		err := os.Mkdir(name, os.ModePerm)
+		if err == nil {
+			return name, nil
+		}
+		if os.IsExist(err) {
+			if try++; try < 10000 {
+				continue
+			}
+			return "", &os.PathError{Op: "fsmap.mkdirtemp", Path: dir, Err: os.ErrExist}
+		}
+		if os.IsNotExist(err) {
+			if _, err := os.Stat(dir); os.IsNotExist(err) {
+				return "", err
+			}
+		}
+		return "", err
+	}
+}
 
 func hashAlgorithm(f func() hash.Hash) func([]byte) string {
 	return func(b []byte) string {
@@ -81,7 +106,7 @@ func (f Fsmap) Lookup(key []byte, create bool) (path string, err error) {
 		return
 	}
 
-	if path, err = os.MkdirTemp(base, ""); err != nil {
+	if path, err = mkdirTemp(base); err != nil {
 		return
 	}
 	err = ioutil.WriteFile(filepath.Join(path, "key"), key, 0644)
