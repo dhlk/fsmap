@@ -3,9 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"fsmap"
 	"os"
-
-	"github.com/dhlk/fsmap"
 )
 
 func mapfs(prefix, algorithm, key string, create bool) (path string, err error) {
